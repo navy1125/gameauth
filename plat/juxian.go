@@ -15,11 +15,10 @@ import (
 )
 
 // juxian game auth
-func OnAuthJuxian(w http.ResponseWriter, req *http.Request) {
+func OnAuthJuXian(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
-	logging.Debug("request login:%s,%s", req.RemoteAddr, req.URL.Path)
+	logging.Debug("juxian request login:%s,%s", req.RemoteAddr, req.URL.Path)
 	game_plat := game.GetGameNameByUrl(req.URL.Path) + "_" + game.GetPlatNameByUrl(req.URL.Path)
-	http.Redirect(w, req, config.GetConfigStr(game_plat+"_err"), 303)
 	qid := req.FormValue("qid")
 	timestr := req.FormValue("time")
 	server_id := req.FormValue("server_id")

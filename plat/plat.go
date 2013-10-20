@@ -12,7 +12,8 @@ var (
 
 func init() {
 	platMap = make(map[string]PlatLoginFunc)
-	platMap["/bw/juxian"] = OnAuthJuxian
+	platMap["/bw/juxian"] = OnAuthJuXian
+	platMap["/bw/kw"] = OnAuthKuaiWan
 }
 func InitPlat() {
 	for key, val := range platMap {
