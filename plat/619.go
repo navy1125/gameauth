@@ -4,7 +4,6 @@ import (
 	"../db"
 	"../game"
 	"crypto/md5"
-	"encoding/json"
 	"fmt"
 	"github.com/GXTime/logging"
 	"github.com/navy1125/config"
@@ -15,54 +14,43 @@ import (
 	"time"
 )
 
-type ErrorState struct {
-	Result string
-}
-
 // juxian game auth
-func OnAuthKuaiWan(w http.ResponseWriter, req *http.Request) {
+func OnAuth619Game(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
-	logging.Debug("kw request login:%s,%s", req.RemoteAddr, req.URL.Path)
+	logging.Debug("619 request login:%s,%s", req.RemoteAddr, req.URL.Path)
 	game_plat := game.GetGameNameByUrl(req.URL.Path) + "_" + game.GetPlatNameByUrl(req.URL.Path)
-	account := req.FormValue("login_name")
-	timestr := req.FormValue("time")
-	game_id := req.FormValue("game_id")
-	server_id := req.FormValue("server_id")
-	from_id := req.FormValue("from_id")
-	sign := req.FormValue("token")
+	StationId := req.FormValue("StationId")
+	account := req.FormValue("UserId")
+	timestr := req.FormValue("Time")
+	game_id := req.FormValue("GameId")
+	server_id := req.FormValue("ServerId")
+	sign := req.FormValue("Sign")
 	hash := md5.New()
-	mystr := "from_id=" + from_id + "&game_id=" + game_id + "&server_id=" + server_id + "&login_name=" + account + "&time=" + timestr + config.GetConfigStr(game_plat+"_key")
+	mystr := "StationId=" + StationId + "&" + account + "&" + game_id + "&" + server_id + "&" + config.GetConfigStr(game_plat+"_key") + "_" + timestr
 	io.WriteString(hash, mystr)
 	mysign := fmt.Sprintf("%x", hash.Sum(nil))
 	if mysign != sign {
-		logging.Debug("kuaiwan md5 check err:%s,%s,%s", mystr, mysign, sign)
-		ret := ErrorState{Result: "-1"}
-		b, _ := json.Marshal(ret)
-		w.Write(b)
+		logging.Debug("md5 check err:%s,%s,%s", mystr, mysign, sign)
+		//TODO redirect error page
+		http.Redirect(w, req, config.GetConfigStr(game_plat+"_err"), 303)
 		return
 	}
-	if account == "" || len(account) > 20 {
-		logging.Debug("account err:%s", mystr)
-		ret := ErrorState{Result: "-2"}
-		b, _ := json.Marshal(ret)
-		w.Write(b)
+	if account == "" {
+		http.Redirect(w, req, config.GetConfigStr(game_plat+"_err"), 303)
+		logging.Debug("account and qid can not be none both:%s", mystr)
 		return
 	}
 	tr, _ := strconv.Atoi(timestr)
 	diffsec := math.Abs(float64(time.Now().Unix() - int64(tr)))
 	if diffsec > time.Hour.Seconds()*24 {
-		ret := ErrorState{Result: "-6"}
-		b, _ := json.Marshal(ret)
-		w.Write(b)
+		http.Redirect(w, req, config.GetConfigStr(game_plat+"_err"), 303)
+		logging.Debug("time err:%s,%d,%d", mystr, time.Now().Unix(), diffsec)
 		return
 	}
 
-	account = from_id + ":" + account
 	myaccount, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account)
 	if err != nil {
-		ret := ErrorState{Result: "-6"}
-		b, _ := json.Marshal(ret)
-		w.Write(b)
+		http.Redirect(w, req, config.GetConfigStr(game_plat+"_err"), 303)
 		return
 	}
 	logging.Debug("request login ok:%s,%d", myaccount, myaccid)
