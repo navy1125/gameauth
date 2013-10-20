@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="GB2312"?>
+<GXTime>
+	<Key>
+		<!--MySQL database connection[mysql://user:passwd@host:port/dbName]-->
+		<bw_juxian_key>wwwwwwwwwwwwwwwwwwwwwwwww</bw_juxian_key>
+		<bw_juxian_err>http://www.bwgame.com.cn</bw_juxian_err>
+		<bw_juxian_ok>http://www.bwgame.com.cn</bw_juxian_ok>
+	</Key>
+</GXTime>

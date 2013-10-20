@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="GB2312"?>
+
+<GXTime>
+	<LoginServerList>
+		<server ip="127.0.0.1" port="6999"/>
+	</LoginServerList>
+</GXTime>
