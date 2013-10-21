@@ -46,7 +46,7 @@ func AddLoginToken(game string, server_id string, myaccount string, myaccid uint
 
 //get gamename by urlstring usl master as /game/plat
 func GetGameNameByUrl(url string) string {
-	if ok, err := regexp.MatchString("^/.*/.*$", url); ok == false || err != nil {
+	if ok, err := regexp.MatchString("^/.*/.*/.*$", url); ok == false || err != nil {
 		logging.Error("url string err:%s", url)
 		return ""
 	}
@@ -55,7 +55,7 @@ func GetGameNameByUrl(url string) string {
 
 //get platname by urlstring usl master as /game/plat
 func GetPlatNameByUrl(url string) string {
-	if ok, err := regexp.MatchString("^/.*/.*$", url); ok == false || err != nil {
+	if ok, err := regexp.MatchString("^/.*/.*/.*$", url); ok == false || err != nil {
 		logging.Error("url string err:%s", url)
 		return ""
 	}

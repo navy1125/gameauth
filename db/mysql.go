@@ -11,6 +11,11 @@ var (
 	db *mysql.Conn
 )
 
+type CharName struct {
+	CharId   string
+	CharName string
+}
+
 func GetMyAccount(channel, account string) (string, uint32, error) {
 	query_string := "select accid from ACCOUNT where account = '" + account + "' and channel = '" + channel + "'"
 	row, res, err := db.QueryFirst(query_string)
@@ -35,4 +40,7 @@ func addMyAccount(channel, account string) (string, uint32, error) {
 }
 func InitDatabase(addr, name, password, dbname string) {
 	db = mysql.New("tcp", "", addr, name, password, dbname)
+}
+func GetAllCharNameByAccid(myaccid uint32) []CharName {
+	return nil
 }

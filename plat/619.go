@@ -15,7 +15,7 @@ import (
 )
 
 // juxian game auth
-func OnAuth619Game(w http.ResponseWriter, req *http.Request) {
+func On619GameAuth(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
 	logging.Debug("619 request login:%s,%s", req.RemoteAddr, req.URL.Path)
 	game_plat := game.GetGameNameByUrl(req.URL.Path) + "_" + game.GetPlatNameByUrl(req.URL.Path)
