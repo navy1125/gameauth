@@ -9,6 +9,7 @@
 	<AuthServer>
 		<!--MySQL database connection[mysql://user:passwd@host:port/dbName]-->
 		<mysql encode="no">mysql://root:123@127.0.0.1:3306/MonitorServer</mysql>
+		<mysql_checkname encode="no">mysql://root:123@127.0.0.1:3306/MonitorServer</mysql_checkname>
 		<key>key.xml</key>
 		<port>8000</port>
 		<loginServerList>loginServerList.xml</loginServerList>

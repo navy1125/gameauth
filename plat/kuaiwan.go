@@ -81,7 +81,7 @@ func OnKuaiWanAuth(w http.ResponseWriter, req *http.Request) {
 	}
 
 	account = from_id + ":" + account
-	myaccount, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account)
+	myaccount, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account, "")
 	if err != nil {
 		ret := ErrorState{Result: "-5"}
 		b, _ := json.Marshal(ret)
@@ -151,7 +151,7 @@ func OnKuaiWanBill(w http.ResponseWriter, req *http.Request) {
 	}
 
 	account = from_id + ":" + account
-	myaccount, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account)
+	myaccount, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account, "")
 	if err != nil {
 		ret := ErrorState{Result: "-5"}
 		b, _ := json.Marshal(ret)
@@ -205,7 +205,7 @@ func OnKuaiWanCheckName(w http.ResponseWriter, req *http.Request) {
 	}
 
 	account = from_id + ":" + account
-	_, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account)
+	_, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account, "")
 	if err != nil {
 		ret := ErrorState{Result: "-3"}
 		b, _ := json.Marshal(ret)

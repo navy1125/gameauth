@@ -48,7 +48,7 @@ func On619GameAuth(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	myaccount, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account)
+	myaccount, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account, "")
 	if err != nil {
 		http.Redirect(w, req, config.GetConfigStr(game_plat+"_err"), 303)
 		return

@@ -49,6 +49,16 @@ func main() {
 	mysqlurls := strings.Split(mysqlurl, ":")
 	config.SetConfig("dbname", mysqlurls[4])
 	db.InitDatabase(mysqlurls[2]+":"+mysqlurls[3], mysqlurls[0], mysqlurls[1], mysqlurls[4])
+	mysqlurl = config.GetConfigStr("mysql_checkname")
+	if ok, err := regexp.MatchString("^mysql://.*:.*@.*/.*$", mysqlurl); ok == false || err != nil {
+		logging.Error("mysql config syntax err:%s", mysqlurl)
+		return
+	}
+	mysqlurl = strings.Replace(mysqlurl, "mysql://", "", 1)
+	mysqlurl = strings.Replace(mysqlurl, "@", ":", 1)
+	mysqlurl = strings.Replace(mysqlurl, "/", ":", 1)
+	mysqlurls = strings.Split(mysqlurl, ":")
+	db.InitCheckNameDatabase(mysqlurls[2]+":"+mysqlurls[3], mysqlurls[0], mysqlurls[1], mysqlurls[4])
 	plat.InitPlat()
 	game.InitGame()
 	err = http.ListenAndServe(":"+config.GetConfigStr("port"), nil)
