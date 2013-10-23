@@ -60,7 +60,8 @@ func main() {
 	mysqlurls = strings.Split(mysqlurl, ":")
 	db.InitCheckNameDatabase(mysqlurls[2]+":"+mysqlurls[3], mysqlurls[0], mysqlurls[1], mysqlurls[4])
 	plat.InitPlat()
-	game.InitGame()
+	game.InitLogin()
+	game.InitBill()
 	err = http.ListenAndServe(":"+config.GetConfigStr("port"), nil)
 	if err != nil {
 		logging.Error("ListenAndServe:%s", err.Error())

@@ -84,3 +84,70 @@ func (self *GameLoginBw) Login(zoneid uint32, myaccount string, myaccid uint32, 
 
 	return nil
 }
+
+type GameBillingBw struct {
+	task *gotcp.Task
+}
+
+func NewGameBillingBw() *GameBillingBw {
+	return &GameBillingBw{}
+}
+
+func (self *GameBillingBw) Init(name string) bool {
+	conn := self.Connect()
+	tick := time.Tick(time.Second)
+	for {
+		select {
+		case <-tick:
+			if conn == nil {
+				conn = self.Connect()
+			}
+			if conn != nil {
+				self.task = gotcp.NewTask(conn, "BW")
+				self.task.SetHandleReadFun(base.HandleReadFunBw)
+				self.task.SetHandleWriteFun(base.HandleWriteFunBw)
+				self.task.SetHandleParseFun(base.HandleParseBw)
+				self.task.SetHandleHeartBteaFun(base.HandleHeartBeatRequestBw, time.Second*10)
+				self.task.SetHandleMessage(&handleMessageMap)
+				cmd := Cmd.NewStRequestLoginBillUserCmd()
+				cmd.Version = 20211111
+				self.task.SendCmd(cmd)
+				self.task.Id = 1 //rand.Int63()
+				self.task.Name = name
+				self.task.Start()
+				<-self.task.StopChan
+				conn = nil
+			}
+		}
+	}
+	return true
+}
+func (self *GameBillingBw) Connect() *net.TCPConn {
+	cfg := config.NewConfig()
+	if err := cfg.LoadFromFile(config.GetConfigStr("loginServerList"), "BillServerList"); err != nil {
+		logging.Error("init game err,%s", err.Error())
+		return nil
+	}
+	addr := cfg.GetConfigStr("ip") + ":" + cfg.GetConfigStr("port")
+	raddr, _ := net.ResolveTCPAddr("tcp", addr)
+	conn, err := net.DialTCP("tcp", nil, raddr)
+	if err != nil {
+		logging.Error("conn err:%s,1%s", addr, err.Error())
+		return nil
+	}
+	logging.Debug("new connection:%s", conn.RemoteAddr())
+	return conn
+}
+
+func (self *GameBillingBw) Billing(zoneid uint32, myaccid uint32, moneynum uint32) error {
+	cmd := Cmd.NewStWebLoginUserTokenWebGateUserCmd()
+	cmd.Zoneid = zoneid
+	cmd.Accid = myaccid
+	cmd.Lifetime = 3600 //token过期时间,0表示只登陆一次
+	cmd.UserType = 1    ///ChannelType
+	if self.task != nil {
+		self.task.SendCmd(cmd)
+	}
+
+	return nil
+}
