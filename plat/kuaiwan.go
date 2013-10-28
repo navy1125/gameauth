@@ -180,7 +180,7 @@ func OnKuaiWanBill(w http.ResponseWriter, req *http.Request) {
 	gameid, _ := strconv.Atoi(game_id)
 	serverid, _ := strconv.Atoi(server_id)
 	server_id = strconv.Itoa(gameid<<16) + strconv.Itoa(serverid)
-	game.Billing(game.GetGameNameByUrl(req.URL.Path), server_id, myaccid, uint32(moneynum))
+	game.Billing(game.GetGameNameByUrl(req.URL.Path), server_id, myaccid, 0, uint32(moneynum))
 	ret := ErrorState{Result: "1"}
 	b, _ := json.Marshal(ret)
 	w.Write(b)

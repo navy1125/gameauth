@@ -139,15 +139,16 @@ func (self *GameBillingBw) Connect() *net.TCPConn {
 	return conn
 }
 
-func (self *GameBillingBw) Billing(zoneid uint32, myaccid uint32, moneynum uint32) error {
-	cmd := Cmd.NewStWebLoginUserTokenWebGateUserCmd()
+func (self *GameBillingBw) Billing(zoneid uint32, myaccid uint32, charid uint32, moneynum uint32) error {
+	cmd := Cmd.NewStReturnPlatformToGoldZoneBillUserCmd()
 	cmd.Zoneid = zoneid
 	cmd.Accid = myaccid
-	cmd.Lifetime = 3600 //token过期时间,0表示只登陆一次
-	cmd.UserType = 1    ///ChannelType
+	cmd.Charid = charid
+	cmd.DwNum = moneynum
 	if self.task != nil {
 		self.task.SendCmd(cmd)
 	}
+	logging.Info("bw billing :%d,%d,%d,%d", zoneid, myaccid, charid, moneynum)
 
 	return nil
 }

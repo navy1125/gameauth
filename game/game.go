@@ -16,7 +16,7 @@ type GameLogin interface {
 }
 type GameBill interface {
 	Init(name string) bool
-	Billing(zoneid uint32, myaccid uint32, moneynum uint32) error
+	Billing(zoneid uint32, myaccid uint32, charid uint32, moneynum uint32) error
 }
 
 var (
@@ -59,10 +59,10 @@ func AddLoginToken(game string, server_id string, myaccount string, myaccid uint
 	}
 	return nil
 }
-func Billing(game string, server_id string, myaccid uint32, moneynum uint32) error {
+func Billing(game string, server_id string, myaccid uint32, charid uint32, moneynum uint32) error {
 	if gamefun, ok := billMap[game]; ok == true {
 		zoneid, _ := strconv.Atoi(server_id)
-		return gamefun.Billing(uint32(zoneid), myaccid, moneynum)
+		return gamefun.Billing(uint32(zoneid), myaccid, charid, moneynum)
 	} else {
 		logging.Error("not game func for game:%s", game)
 	}
