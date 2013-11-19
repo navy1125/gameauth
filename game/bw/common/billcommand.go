@@ -40,7 +40,7 @@ type StReturnLoginBillUserCmd struct {
 
 func NewStReturnLoginBillUserCmd() *StReturnLoginBillUserCmd {
 	cmd := &StReturnLoginBillUserCmd{}
-	cmd.ByCmd = WEBGATE_USERCMD
+	cmd.ByCmd = BILL_USERCMD
 	cmd.ByParam = RETURN_LOGIN_WEBGATE_USERCMD_PARA_S
 	return cmd
 }
@@ -57,7 +57,7 @@ type StReturnPlatformToGoldZoneBillUserCmd struct {
 
 func NewStReturnPlatformToGoldZoneBillUserCmd() *StReturnPlatformToGoldZoneBillUserCmd {
 	cmd := &StReturnPlatformToGoldZoneBillUserCmd{}
-	cmd.ByCmd = WEBGATE_USERCMD
+	cmd.ByCmd = BILL_USERCMD
 	cmd.ByParam = RETURN_PLATFORM_TO_GOLD_BILL_USERCMD_PARA_SC
 	return cmd
 }

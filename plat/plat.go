@@ -14,7 +14,7 @@ var (
 func init() {
 	platMap = make(map[string]PlatLoginFunc)
 	platMap["/zssj/juxian/auth"] = OnJuXianAuth
-	platMap["/zssj/juxian/bill"] = OnJuXianAuth
+	platMap["/zssj/juxian/bill"] = OnJuXianBill
 	platMap["/zssj/juxian/check"] = OnJuXianAuth
 	platMap["/zssj/kw/auth"] = OnKuaiWanAuth
 	platMap["/zssj/kw/bill"] = OnKuaiWanBill
@@ -24,8 +24,8 @@ func init() {
 	platMap["/zssj/619/check"] = On619GameAuth
 }
 func InitPlat() {
-	http.Handle("/zssj/js/", http.StripPrefix("/bw/js/", http.FileServer(http.Dir(config.GetConfigStr("bw_plugin")+"/js"))))
-	http.Handle("/zssj/images/", http.StripPrefix("/bw/images/", http.FileServer(http.Dir(config.GetConfigStr("bw_plugin")+"/images"))))
+	http.Handle("/zssj/js/", http.StripPrefix("/zssj/js/", http.FileServer(http.Dir(config.GetConfigStr("bw_plugin")+"/js"))))
+	http.Handle("/zssj/images/", http.StripPrefix("/zssj/images/", http.FileServer(http.Dir(config.GetConfigStr("bw_plugin")+"/images"))))
 	for key, val := range platMap {
 		http.HandleFunc(key, val)
 	}

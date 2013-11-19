@@ -27,9 +27,9 @@ var (
 
 func init() {
 	loginMap = make(map[string]GameLogin)
-	AddLogin("bw", bw.NewGameLoginBw())
+	AddLogin("zssj", bw.NewGameLoginBw())
 	billMap = make(map[string]GameBill)
-	AddBill("bw", bw.NewGameBillingBw())
+	AddBill("zssj", bw.NewGameBillingBw())
 
 }
 func InitLogin() bool {

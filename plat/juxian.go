@@ -64,3 +64,43 @@ func OnJuXianAuth(w http.ResponseWriter, req *http.Request) {
 	//http.Redirect(w, req, config.GetConfigStr(game_plat+"_ok")+para, 303)
 	//TODO redirect to gamepage
 }
+func OnJuXianBill(w http.ResponseWriter, req *http.Request) {
+	defer req.Body.Close()
+	logging.Debug("juxian request bill:%s,%s", req.RemoteAddr, req.URL.Path)
+	game_plat := game.GetGameNameByUrl(req.URL.Path) + "_" + game.GetPlatNameByUrl(req.URL.Path)
+	qid := req.FormValue("qid")
+	order_amount := req.FormValue("order_amount")
+	order_id := req.FormValue("order_id")
+	server_id := req.FormValue("server_id")
+	sign := req.FormValue("sign")
+	hash := md5.New()
+	mystr := qid + order_amount + order_id + server_id + config.GetConfigStr(game_plat+"_key")
+	io.WriteString(hash, mystr)
+	mysign := fmt.Sprintf("%x", hash.Sum(nil))
+	if mysign != sign {
+		logging.Debug("md5 check err:%s,%s,%s", mystr, mysign, sign)
+		w.Write([]byte("0"))
+		return
+	}
+
+	myaccid, err := db.GetMyAccountByAccountId(game.GetPlatNameByUrl(req.URL.Path), qid)
+	if err != nil {
+		logging.Debug("bill account err:%s", qid)
+		w.Write([]byte("3"))
+		return
+	}
+	names := db.GetAllCharNameByAccid(myaccid)
+	if names == nil || len(names) == 0 {
+		logging.Debug("bill checkname err:%d,%s", myaccid, qid)
+		w.Write([]byte("3"))
+		return
+	}
+	zoneid, _ := strconv.Atoi(server_id)
+	gameid, _ := db.GetZonenameByZoneid(uint32(zoneid))
+	logging.Debug("request bill ok:%s,%d,%d,%d", qid, myaccid, gameid, zoneid)
+	serverid, _ := strconv.Atoi(server_id)
+	server_id = strconv.Itoa((gameid << 16) + serverid)
+	moneynum, _ := strconv.ParseFloat(order_amount, 32)
+	game.Billing(game.GetGameNameByUrl(req.URL.Path), server_id, myaccid, 0, uint32(moneynum*100))
+	w.Write([]byte("1"))
+}

@@ -33,7 +33,7 @@ func parseStRequestUserGameTimeTimerUserCmd(task *gotcp.Task, data []byte) {
 		task.Error(err.Error())
 		return
 	}
-	task.Debug("parseStRequestUserGameTimeTimerUserCmd:%d,%d", cmd.ByCmd, cmd.ByParam)
+	//task.Debug("parseStRequestUserGameTimeTimerUserCmd:%d,%d", cmd.ByCmd, cmd.ByParam)
 	task.SendCmd(cmd)
 }
 
@@ -46,5 +46,5 @@ func parseStUserGameTimeTimerUserCmd(task *gotcp.Task, data []byte) {
 	}
 	cmd.QwGameTime = 0
 	cmd.Mac = 0
-	task.Debug("parseStUserGameTimeTimerUserCmd:%d,%d", cmd.ByCmd, cmd.ByParam)
+	//task.Debug("parseStUserGameTimeTimerUserCmd:%d,%d", cmd.ByCmd, cmd.ByParam)
 }

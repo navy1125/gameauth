@@ -74,6 +74,7 @@ func main() {
 		fmt.Println("GetLocalIp Err:", err)
 		logging.Debug("GetLocalIp Err:%s", err.Error())
 	}
+	fmt.Println(addrs[0].String(), addrs[0].Network(), strings.Split(addrs[0].String(), "/")[0])
 	err = http.ListenAndServe(strings.Split(addrs[0].String(), "/")[0]+":"+config.GetConfigStr("port"), nil)
 	if err != nil {
 		fmt.Println(err)

@@ -32,7 +32,23 @@ func GetMyAccount(channel, account, accountid string) (string, uint32, error) {
 	if len(row) == 0 {
 		return addMyAccount(channel, account, accountid)
 	}
-	return channel + ":" + accountid + ":" + account, uint32(row.Int(res.Map("accid"))), nil
+	return channel + ":" + account + ":" + accountid, uint32(row.Int(res.Map("accid"))), nil
+}
+func GetMyAccountByAccountId(channel, accountid string) (uint32, error) {
+	if accountid == "" {
+		accountid = "0"
+	}
+	query_string := "select accid from ACCOUNT where accountid = '" + accountid + "' and channel = '" + channel + "'"
+	row, res, err := db.QueryFirst(query_string)
+	row, res, err = db.QueryFirst(query_string)
+	if err != nil {
+		logging.Error("select err:", err.Error())
+		return 0, err
+	}
+	if len(row) == 0 {
+		return 0, nil
+	}
+	return uint32(row.Int(res.Map("accid"))), nil
 }
 func addMyAccount(channel, account, accountid string) (string, uint32, error) {
 	query_string := "insert into ACCOUNT (CHANNEL,ACCOUNT,ACCOUNTID) values( '" + channel + "' , '" + account + "' , " + accountid + ")"
@@ -52,7 +68,7 @@ func InitCheckNameDatabase(addr, name, password, dbname string) {
 
 func GetAllCharNameByAccid(myaccid uint32) []CharName {
 	query_string := "select ID,NAME from CHARNAME where ACCID = " + strconv.Itoa(int(myaccid))
-	rows, res, err := db.Query(query_string)
+	rows, res, err := db_checkname.Query(query_string)
 	if err != nil {
 		logging.Error("select err:%s", err.Error())
 		return nil
