@@ -66,3 +66,18 @@ func GetAllCharNameByAccid(myaccid uint32) []CharName {
 	}
 	return names
 }
+
+func GetZonenameByZoneid(zoneid uint32) (int, string) {
+	query_string := "select GAME,NAME from zoneInfo where zone = " + strconv.Itoa(int(zoneid))
+	rows, res, err := db.Query(query_string)
+	if err != nil {
+		logging.Error("select err:%s", err.Error())
+		return 0, ""
+	}
+	game := res.Map("GAME")
+	name := res.Map("NAME")
+	for _, row := range rows {
+		return row.Int(game), row.Str(name)
+	}
+	return 0, ""
+}

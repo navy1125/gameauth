@@ -1,6 +1,7 @@
 package plat
 
 import (
+	"github.com/navy1125/config"
 	"net/http"
 )
 
@@ -23,6 +24,8 @@ func init() {
 	platMap["/bw/619/check"] = On619GameAuth
 }
 func InitPlat() {
+	http.Handle("/bw/js/", http.StripPrefix("/bw/js/", http.FileServer(http.Dir(config.GetConfigStr("bw_plugin")+"/js"))))
+	http.Handle("/bw/images/", http.StripPrefix("/bw/images/", http.FileServer(http.Dir(config.GetConfigStr("bw_plugin")+"/images"))))
 	for key, val := range platMap {
 		http.HandleFunc(key, val)
 	}

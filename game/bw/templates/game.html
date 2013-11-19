@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>{{.GameName}} - {{ .Zonename }}</title>
+		<style type="text/css">
+			body{padding:0px;margin:0px;background:#000;font-family:'microsoft yaHei','微软雅黑',arial;font-size:12px;font-weight:normal;}
+			.wrap{background:#030303 url(../images/body.jpg) no-repeat center top;min-width:1000px;padding:300px 0 100px;text-align:center;}
+			.setup{padding:0;padding-right:84px;margin-top:16px !important;margin-bottom:28px !important;}
+			.setup a#setuphref{background:url(../images/start.jpg) no-repeat left top;display:block;width:301px;height:81px;overflow:hidden;text-indent:-9999px;line-height:9999px;cursor:pointer;border:0;margin:0 auto;}
+			.setup a#setuphref:hover {background-position:0 -89px;}
+			.main,.game,.plugin{width:100%;height:100%;}
+			.plugin{text-align:center;}
+			#IEControl, #NPControl{margin:0 auto;}
+			.start {width:100%;text-align:center;}
+			.start .setup{width:247px;height:72px;position:relative;margin:0 auto;}
+			.start .setup a{background:url(../images/start.png) no-repeat;display:block;width:247px;height:72px;position:absolute;top:0;left:5px;_left:15px;}
+			.start .setup a:hover {background-position:0 -72px;}
+			.hidden,#fs,#ws{display:none;}
+		</style>
+	</head>
+	<body onhelp="return false;">
+		<div class="main">
+			<div class="game">
+				<div class="start hidden wrap" id="start">
+					<div class="setup"><a id="setuphref" href="javascript:void(0);"></a></div>
+				</div>
+				<div class="plugin" id="plugin">
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript">
+			var param = '<param name="token" value="{{ .Token }}"/><param name="zoneid" value="{{ .Zoneid }}"/><param name="zonetype" value="{{ .Zonetype }}"/><param name="nettype" value="{{ .Nettype }}"/><param name="StartType" value="{{ .Starttype }}"/><param name="ZoneName" value="{{ .Zonename }}"/><param name="PatchUrl" value="{{ .Patchurl }}"/><param name="AllUrl" value="{{ .Allurl }}"/><param name="LoginAddr" value="{{ .Loginaddr }}"/><param name="LoginPort" value="{{ .Loginport }}"/><param name="ConfigPath" value="{{ .Configpath }}"/>';
+			var zoneID = '{{ .Zoneid }}';
+			var gameName = '{{.GameName}}';
+			var setuppath = '{{ .Setuppath }}';
+			var loginurl = '{{ .Loginurl }}';
+		</script>
+		<script type="text/javascript" src="../js/game.js?4244"></script>
+	</body>
+</html>

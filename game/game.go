@@ -3,6 +3,7 @@ package game
 import (
 	"./bw"
 	"github.com/GXTime/logging"
+	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
@@ -12,7 +13,7 @@ import (
 type GameLoginFunc func(zoneid uint32, myaccount string, myaccid uint32, isAdult uint32, token string) error
 type GameLogin interface {
 	Init(name string) bool
-	Login(zoneid uint32, myaccount string, myaccid uint32, isAdult uint32, token string) error
+	Login(zoneid uint32, myaccount string, myaccid uint32, isAdult uint32, token string, w http.ResponseWriter, err_url string) error
 }
 type GameBill interface {
 	Init(name string) bool
@@ -50,10 +51,10 @@ func AddBill(name string, game GameBill) {
 	billMap[name] = game
 }
 
-func AddLoginToken(game string, server_id string, myaccount string, myaccid uint32, isAdult uint32, token string) error {
+func AddLoginToken(game string, server_id string, myaccount string, myaccid uint32, isAdult uint32, token string, w http.ResponseWriter, err_url string) error {
 	if gamefun, ok := loginMap[game]; ok == true {
 		zoneid, _ := strconv.Atoi(server_id)
-		return gamefun.Login(uint32(zoneid), myaccount, myaccid, isAdult, token)
+		return gamefun.Login(uint32(zoneid), myaccount, myaccid, isAdult, token, w, err_url)
 	} else {
 		logging.Error("not game func for game:%s", game)
 	}

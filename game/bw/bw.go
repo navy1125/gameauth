@@ -7,9 +7,35 @@ import (
 	//"github.com/navy1125/gotcp/bw/common"
 	"github.com/navy1125/gotcp/gotcp"
 	//"math/rand"
+	"../../db"
 	Cmd "./common"
+	"html/template"
 	"net"
+	"net/http"
+	"strconv"
 	"time"
+)
+
+type BwGameTemplate struct {
+	GameName   string
+	Zonename   string
+	Token      string
+	Zoneid     string
+	Zonetype   string
+	Nettype    string
+	Starttype  string
+	Patchurl   string
+	Allurl     string
+	Setuppath  string
+	Loginurl   string
+	Loginaddr  string
+	Loginport  string
+	Configpath string
+}
+
+var (
+	tmpl_data *BwGameTemplate
+	tmpl      *template.Template
 )
 
 type GameLoginBw struct {
@@ -23,6 +49,21 @@ func NewGameLoginBw() *GameLoginBw {
 func (self *GameLoginBw) Init(name string) bool {
 	conn := self.Connect()
 	tick := time.Tick(time.Second)
+	tmpl_data = &BwGameTemplate{}
+	tmpl_data.GameName = config.GetConfigStr("bw_gamename")
+	tmpl_data.Starttype = config.GetConfigStr("bw_starttype")
+	tmpl_data.Patchurl = config.GetConfigStr("bw_patchurl")
+	tmpl_data.Allurl = config.GetConfigStr("bw_allurl")
+	tmpl_data.Setuppath = config.GetConfigStr("bw_setuppath") + "#" + strconv.Itoa(int(time.Now().Unix()))
+	tmpl_data.Loginaddr = config.GetConfigStr("bw_loginaddr")
+	tmpl_data.Loginport = config.GetConfigStr("bw_loginport")
+	tmpl_data.Configpath = config.GetConfigStr("bw_configpath")
+	var err error
+	tmpl, err = template.ParseFiles(config.GetConfigStr("bw_plugin") + "/templates/game.html")
+	if err != nil {
+		logging.Debug("open game page error:%s", err.Error())
+		return false
+	}
 	for {
 		select {
 		case <-tick:
@@ -65,9 +106,15 @@ func (self *GameLoginBw) Connect() *net.TCPConn {
 	return conn
 }
 
-func (self *GameLoginBw) Login(zoneid uint32, myaccount string, myaccid uint32, isAdult uint32, token string) error {
+func (self *GameLoginBw) Login(zoneid uint32, myaccount string, myaccid uint32, isAdult uint32, token string, w http.ResponseWriter, err_url string) error {
+	game := 0
+	game, tmpl_data.Zonename = db.GetZonenameByZoneid(zoneid)
+	tmpl_data.Token = token
+	tmpl_data.Zoneid = strconv.Itoa(int(zoneid))
+	tmpl_data.Zonetype = "0"
+	tmpl_data.Nettype = "0"
 	cmd := Cmd.NewStWebLoginUserTokenWebGateUserCmd()
-	cmd.Zoneid = zoneid
+	cmd.Zoneid = uint32((game << 16) + int(zoneid))
 	cmd.Accid = myaccid
 	for i, v := range myaccount {
 		cmd.Account[i] = byte(v)
@@ -80,6 +127,12 @@ func (self *GameLoginBw) Login(zoneid uint32, myaccount string, myaccid uint32, 
 	}
 	if self.task != nil {
 		self.task.SendCmd(cmd)
+	}
+	tmpl_data.Loginurl = err_url
+	err := tmpl.Execute(w, tmpl_data)
+	if err != nil {
+		logging.Debug("excute game page error:%s", err.Error())
+		return err
 	}
 
 	return nil
