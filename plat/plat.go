@@ -13,19 +13,19 @@ var (
 
 func init() {
 	platMap = make(map[string]PlatLoginFunc)
-	platMap["/bw/juxian/auth"] = OnJuXianAuth
-	platMap["/bw/juxian/bill"] = OnJuXianAuth
-	platMap["/bw/juxian/check"] = OnJuXianAuth
-	platMap["/bw/kw/auth"] = OnKuaiWanAuth
-	platMap["/bw/kw/bill"] = OnKuaiWanBill
-	platMap["/bw/kw/check"] = OnKuaiWanCheckName
-	platMap["/bw/619"] = On619GameAuth
-	platMap["/bw/619/bill"] = On619GameAuth
-	platMap["/bw/619/check"] = On619GameAuth
+	platMap["/zssj/juxian/auth"] = OnJuXianAuth
+	platMap["/zssj/juxian/bill"] = OnJuXianAuth
+	platMap["/zssj/juxian/check"] = OnJuXianAuth
+	platMap["/zssj/kw/auth"] = OnKuaiWanAuth
+	platMap["/zssj/kw/bill"] = OnKuaiWanBill
+	platMap["/zssj/kw/check"] = OnKuaiWanCheckName
+	platMap["/zssj/619"] = On619GameAuth
+	platMap["/zssj/619/bill"] = On619GameAuth
+	platMap["/zssj/619/check"] = On619GameAuth
 }
 func InitPlat() {
-	http.Handle("/bw/js/", http.StripPrefix("/bw/js/", http.FileServer(http.Dir(config.GetConfigStr("bw_plugin")+"/js"))))
-	http.Handle("/bw/images/", http.StripPrefix("/bw/images/", http.FileServer(http.Dir(config.GetConfigStr("bw_plugin")+"/images"))))
+	http.Handle("/zssj/js/", http.StripPrefix("/bw/js/", http.FileServer(http.Dir(config.GetConfigStr("bw_plugin")+"/js"))))
+	http.Handle("/zssj/images/", http.StripPrefix("/bw/images/", http.FileServer(http.Dir(config.GetConfigStr("bw_plugin")+"/images"))))
 	for key, val := range platMap {
 		http.HandleFunc(key, val)
 	}

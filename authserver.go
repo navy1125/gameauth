@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/GXTime/logging"
 	"github.com/navy1125/config"
+	"net"
 	"net/http"
 	"regexp"
 	"strings"
@@ -62,8 +63,20 @@ func main() {
 	plat.InitPlat()
 	game.InitLogin()
 	game.InitBill()
-	err = http.ListenAndServe(":"+config.GetConfigStr("port"), nil)
+	//addr, err := net.InterfaceByIndex(0)
+	ifname, err := net.InterfaceByName(config.GetConfigStr("ifname"))
 	if err != nil {
-		logging.Error("ListenAndServe:%s", err.Error())
+		fmt.Println("GetLocalIp Err:", err)
+		logging.Debug("GetLocalIp Err:%s", err.Error())
+	}
+	addrs, err := ifname.Addrs()
+	if err != nil {
+		fmt.Println("GetLocalIp Err:", err)
+		logging.Debug("GetLocalIp Err:%s", err.Error())
+	}
+	err = http.ListenAndServe(strings.Split(addrs[0].String(), "/")[0]+":"+config.GetConfigStr("port"), nil)
+	if err != nil {
+		fmt.Println(err)
+		logging.Debug("ListenAndServe:%s", err.Error())
 	}
 }
