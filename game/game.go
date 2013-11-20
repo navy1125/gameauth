@@ -2,7 +2,7 @@ package game
 
 import (
 	"./bw"
-	"github.com/GXTime/logging"
+	"git.code4.in/logging"
 	"net/http"
 	"regexp"
 	"strconv"

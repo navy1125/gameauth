@@ -1,7 +1,8 @@
 package db
 
 import (
-	"github.com/GXTime/logging"
+	"git.code4.in/logging"
+	"github.com/xuyu/iconv"
 	//"github.com/ziutek/mymysql/mysql"
 	mysql "github.com/ziutek/mymysql/autorc"
 	_ "github.com/ziutek/mymysql/native" // Native engine
@@ -66,8 +67,8 @@ func InitCheckNameDatabase(addr, name, password, dbname string) {
 	db_checkname = mysql.New("tcp", "", addr, name, password, dbname)
 }
 
-func GetAllCharNameByAccid(myaccid uint32) []CharName {
-	query_string := "select ID,NAME from CHARNAME where ACCID = " + strconv.Itoa(int(myaccid))
+func GetAllZoneCharNameByAccid(server_id string, myaccid uint32) []CharName {
+	query_string := "select ID,NAME from CHARNAME where ACCID = " + strconv.Itoa(int(myaccid)) + " and  ZONE = " + server_id
 	rows, res, err := db_checkname.Query(query_string)
 	if err != nil {
 		logging.Error("select err:%s", err.Error())
@@ -87,13 +88,25 @@ func GetZonenameByZoneid(zoneid uint32) (int, string) {
 	query_string := "select GAME,NAME from zoneInfo where zone = " + strconv.Itoa(int(zoneid))
 	rows, res, err := db.Query(query_string)
 	if err != nil {
-		logging.Error("select err:%s", err.Error())
+		logging.Error("select err:%s,%s", err.Error(), zoneid)
 		return 0, ""
+	}
+	if len(rows) == 0 {
+		return 3055, "none"
 	}
 	game := res.Map("GAME")
 	name := res.Map("NAME")
+	convert, err1 := iconv.Open("GB2312", "UTF-8")
 	for _, row := range rows {
-		return row.Int(game), row.Str(name)
+		gamename := row.Str(name)
+		if err1 == nil {
+			var err2 error
+			gamename, err2 = convert.ConvString(row.Str(name))
+			if err2 != nil {
+				gamename = row.Str(name)
+			}
+		}
+		return row.Int(game), gamename
 	}
 	return 0, ""
 }

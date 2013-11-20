@@ -6,7 +6,7 @@ import (
 	"./plat"
 	"flag"
 	"fmt"
-	"github.com/GXTime/logging"
+	"git.code4.in/logging"
 	"github.com/navy1125/config"
 	"net"
 	"net/http"
@@ -17,8 +17,8 @@ import (
 func main() {
 	flag.Parse()
 	config.SetConfig("config", *flag.String("config", "config.xml", "config xml file for start"))
-	config.SetConfig("logfilename", *flag.String("logfilename", "/log/logfilename.log", "log file name"))
-	config.SetConfig("deamon", *flag.String("deamon", "false", "need run as demo"))
+	config.SetConfig("logfilename", *flag.String("logfilename", "/log/authserver.log", "log file name"))
+	config.SetConfig("daemon", *flag.String("daemon", "false", "need run as daemon"))
 	config.SetConfig("port", *flag.String("port", "8000", "http port "))
 	config.SetConfig("log", *flag.String("log", "debug", "logger level "))
 	config.SetConfig("loginServerList", *flag.String("loginServerList", "loginServerList.xml", "server list config"))
@@ -39,6 +39,9 @@ func main() {
 	}
 	logger.SetLevel(logging.DEBUG)
 	logging.AddHandler("AU", logger)
+	if config.GetConfigStr("daemon") == "true" {
+		logging.DisableStdout()
+	}
 	mysqlurl := config.GetConfigStr("mysql")
 	if ok, err := regexp.MatchString("^mysql://.*:.*@.*/.*$", mysqlurl); ok == false || err != nil {
 		logging.Error("mysql config syntax err:%s", mysqlurl)

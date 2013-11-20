@@ -15,13 +15,13 @@ func init() {
 	platMap = make(map[string]PlatLoginFunc)
 	platMap["/zssj/juxian/auth"] = OnJuXianAuth
 	platMap["/zssj/juxian/bill"] = OnJuXianBill
-	platMap["/zssj/juxian/check"] = OnJuXianAuth
+	platMap["/zssj/juxian/check"] = OnJuXianCheckName
 	platMap["/zssj/kw/auth"] = OnKuaiWanAuth
 	platMap["/zssj/kw/bill"] = OnKuaiWanBill
 	platMap["/zssj/kw/check"] = OnKuaiWanCheckName
 	platMap["/zssj/619"] = On619GameAuth
 	platMap["/zssj/619/bill"] = On619GameAuth
-	platMap["/zssj/619/check"] = On619GameAuth
+	platMap["/zssj/619/check"] = OnKuaiWanCheckName
 }
 func InitPlat() {
 	http.Handle("/zssj/js/", http.StripPrefix("/zssj/js/", http.FileServer(http.Dir(config.GetConfigStr("bw_plugin")+"/js"))))

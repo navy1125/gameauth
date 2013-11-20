@@ -1,7 +1,7 @@
 package bw
 
 import (
-	"github.com/GXTime/logging"
+	"git.code4.in/logging"
 	"github.com/navy1125/config"
 	"github.com/navy1125/gotcp/bw/base"
 	//"github.com/navy1125/gotcp/bw/common"

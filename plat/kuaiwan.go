@@ -6,8 +6,9 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
-	"github.com/GXTime/logging"
+	"git.code4.in/logging"
 	"github.com/navy1125/config"
+	"github.com/xuyu/iconv"
 	"io"
 	"math"
 	"net/http"
@@ -48,7 +49,7 @@ func OnKuaiWanAuth(w http.ResponseWriter, req *http.Request) {
 	from_id := req.FormValue("from_id")
 	sign := req.FormValue("token")
 	hash := md5.New()
-	mystr := "from_id=" + from_id + "&game_id=" + game_id + "&login_name=" + account + "&server_id=" + server_id + "&time=" + timestr + config.GetConfigStr(game_plat+"_key")
+	mystr := "from_id=" + from_id + "&game_id=" + game_id + "&login_name=" + account + "&server_id=" + server_id + "&time=" + timestr + "&key=" + config.GetConfigStr(game_plat+"_key")
 	io.WriteString(hash, mystr)
 	mysign := fmt.Sprintf("%x", hash.Sum(nil))
 	if mysign != sign {
@@ -88,7 +89,7 @@ func OnKuaiWanAuth(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	account = from_id + ":" + account
+	account = from_id + "_" + account
 	myaccount, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account, "")
 	if err != nil {
 		ret := ErrorState{Result: "-5"}
@@ -99,7 +100,7 @@ func OnKuaiWanAuth(w http.ResponseWriter, req *http.Request) {
 	logging.Debug("request login ok:%s,%d", myaccount, myaccid)
 	gameid, _ := strconv.Atoi(game_id)
 	serverid, _ := strconv.Atoi(server_id)
-	server_id = strconv.Itoa(gameid<<16) + strconv.Itoa(serverid)
+	server_id = strconv.Itoa((gameid << 16) + serverid)
 	game.AddLoginToken(game.GetGameNameByUrl(req.URL.Path), server_id, myaccount, myaccid, 1, mysign, w, config.GetConfigStr(game_plat+"_err"))
 	//para := fmt.Sprintf("?account=%s&accid=%d&server_id=%s", myaccount, myaccid, server_id)
 	//http.Redirect(w, req, config.GetConfigStr(game_plat+"_ok")+para, 303)
@@ -119,7 +120,7 @@ func OnKuaiWanBill(w http.ResponseWriter, req *http.Request) {
 	from_id := req.FormValue("from_id")
 	sign := req.FormValue("token")
 	hash := md5.New()
-	mystr := "from_id=" + from_id + "&game_id=" + game_id + "&login_name=" + account + "&money=" + money + "&order_no=" + order_no + "&server_id=" + server_id + config.GetConfigStr(game_plat+"_key")
+	mystr := from_id + game_id + account + money + order_no + server_id + config.GetConfigStr(game_plat+"_key")
 	io.WriteString(hash, mystr)
 	mysign := fmt.Sprintf("%x", hash.Sum(nil))
 	if mysign != sign {
@@ -168,7 +169,7 @@ func OnKuaiWanBill(w http.ResponseWriter, req *http.Request) {
 	}
 	order_map[order_no] = time.Now().Unix()
 
-	account = from_id + ":" + account
+	account = from_id + "_" + account
 	myaccount, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account, "")
 	if err != nil {
 		ret := ErrorState{Result: "-6"}
@@ -179,7 +180,7 @@ func OnKuaiWanBill(w http.ResponseWriter, req *http.Request) {
 	logging.Debug("request OnKuaiWanBill ok:%s,%d", myaccount, myaccid)
 	gameid, _ := strconv.Atoi(game_id)
 	serverid, _ := strconv.Atoi(server_id)
-	server_id = strconv.Itoa(gameid<<16) + strconv.Itoa(serverid)
+	server_id = strconv.Itoa((gameid << 16) + serverid)
 	game.Billing(game.GetGameNameByUrl(req.URL.Path), server_id, myaccid, 0, uint32(moneynum))
 	ret := ErrorState{Result: "1"}
 	b, _ := json.Marshal(ret)
@@ -197,7 +198,7 @@ func OnKuaiWanCheckName(w http.ResponseWriter, req *http.Request) {
 	from_id := req.FormValue("from_id")
 	sign := req.FormValue("token")
 	hash := md5.New()
-	mystr := "from_id=" + from_id + "&game_id=" + game_id + "&login_name=" + account + "&server_id=" + server_id + config.GetConfigStr(game_plat+"_key")
+	mystr := from_id + game_id + account + server_id + config.GetConfigStr(game_plat+"_key")
 	io.WriteString(hash, mystr)
 	mysign := fmt.Sprintf("%x", hash.Sum(nil))
 	if mysign != sign {
@@ -222,16 +223,18 @@ func OnKuaiWanCheckName(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	account = from_id + ":" + account
+	account = from_id + "_" + account
 	_, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account, "")
 	if err != nil {
+		logging.Debug("my account err:%s", account)
 		ret := ErrorState{Result: "-3"}
 		b, _ := json.Marshal(ret)
 		w.Write(b)
 		return
 	}
-	names := db.GetAllCharNameByAccid(myaccid)
+	names := db.GetAllZoneCharNameByAccid(server_id, myaccid)
 	if names == nil || len(names) == 0 {
+		logging.Debug("names err:%d", myaccid)
 		ret := ErrorState{Result: "-3"}
 		b, _ := json.Marshal(ret)
 		w.Write(b)
@@ -241,10 +244,14 @@ func OnKuaiWanCheckName(w http.ResponseWriter, req *http.Request) {
 		Result: "1",
 		Data:   make([]NickName, len(names)),
 	}
+	convert, _ := iconv.Open("GB2312", "UTF-8")
 	for i, name := range names {
+		charname, _ := convert.ConvString(name.CharName)
+		fmt.Println(name.CharId, charname)
 		nicks.Data[i].Nickid = name.CharId
-		nicks.Data[i].Nickname = name.CharName
+		nicks.Data[i].Nickname = charname
 	}
 	b, _ := json.Marshal(nicks)
+	fmt.Println(string(b))
 	w.Write(b)
 }

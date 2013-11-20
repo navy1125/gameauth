@@ -5,7 +5,7 @@ import (
 	"../game"
 	"crypto/md5"
 	"fmt"
-	"github.com/GXTime/logging"
+	"git.code4.in/logging"
 	"github.com/navy1125/config"
 	"io"
 	"math"
@@ -56,7 +56,7 @@ func On619GameAuth(w http.ResponseWriter, req *http.Request) {
 	logging.Debug("request login ok:%s,%d", myaccount, myaccid)
 	gameid, _ := strconv.Atoi(game_id)
 	serverid, _ := strconv.Atoi(server_id)
-	server_id = strconv.Itoa(gameid<<16) + strconv.Itoa(serverid)
+	server_id = strconv.Itoa((gameid << 16) + serverid)
 	game.AddLoginToken(game.GetGameNameByUrl(req.URL.Path), server_id, myaccount, myaccid, 1, mysign, w, config.GetConfigStr(game_plat+"_err"))
 	//para := fmt.Sprintf("?account=%s&accid=%d&server_id=%s", myaccount, myaccid, server_id)
 	//http.Redirect(w, req, config.GetConfigStr(game_plat+"_ok")+para, 303)
