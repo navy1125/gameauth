@@ -5,7 +5,7 @@ import (
 	"github.com/xuyu/iconv"
 	//"github.com/ziutek/mymysql/mysql"
 	mysql "github.com/ziutek/mymysql/autorc"
-	_ "github.com/ziutek/mymysql/native" // Native engine
+	_ "github.com/ziutek/mymysql/thrsafe" // You may also use the native engine
 	"strconv"
 )
 
@@ -25,9 +25,8 @@ func GetMyAccount(channel, account, accountid string) (string, uint32, error) {
 	}
 	query_string := "select accid from ACCOUNT where account = '" + account + "' and channel = '" + channel + "'"
 	row, res, err := db.QueryFirst(query_string)
-	row, res, err = db.QueryFirst(query_string)
 	if err != nil {
-		logging.Error("select err:", err.Error())
+		logging.Error("select err:%s", err.Error())
 		return "", 0, err
 	}
 	if len(row) == 0 {
@@ -41,9 +40,8 @@ func GetMyAccountByAccountId(channel, accountid string) (uint32, error) {
 	}
 	query_string := "select accid from ACCOUNT where accountid = '" + accountid + "' and channel = '" + channel + "'"
 	row, res, err := db.QueryFirst(query_string)
-	row, res, err = db.QueryFirst(query_string)
 	if err != nil {
-		logging.Error("select err:", err.Error())
+		logging.Error("select err:%s", err.Error())
 		return 0, err
 	}
 	if len(row) == 0 {
@@ -55,7 +53,7 @@ func addMyAccount(channel, account, accountid string) (string, uint32, error) {
 	query_string := "insert into ACCOUNT (CHANNEL,ACCOUNT,ACCOUNTID) values( '" + channel + "' , '" + account + "' , " + accountid + ")"
 	_, res, err := db.Query(query_string)
 	if err != nil {
-		logging.Error("insert err:", err.Error())
+		logging.Error("insert err:%s", err.Error())
 		return "", 0, err
 	}
 	return channel + ":" + account, uint32(res.InsertId()), nil

@@ -20,7 +20,6 @@ import (
 // juxian game auth
 func OnJuXianAuth(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
-	logging.Debug("juxian request login:%s,%s", req.RemoteAddr, req.URL.Path)
 	game_plat := game.GetGameNameByUrl(req.URL.Path) + "_" + game.GetPlatNameByUrl(req.URL.Path)
 	qid := req.FormValue("qid")
 	timestr := req.FormValue("time")
@@ -28,6 +27,7 @@ func OnJuXianAuth(w http.ResponseWriter, req *http.Request) {
 	sign := req.FormValue("sign")
 	isAdult := req.FormValue("isAdult")
 	account := req.FormValue("account")
+	logging.Debug("juxian request login:%s,%s,%s", qid, req.RemoteAddr, req.URL.Path)
 	hash := md5.New()
 	mystr := "qid=" + qid + "&time=" + timestr + "&server_id=" + server_id + config.GetConfigStr(game_plat+"_key")
 	io.WriteString(hash, mystr)
@@ -84,13 +84,13 @@ func OnJuXianAuth(w http.ResponseWriter, req *http.Request) {
 }
 func OnJuXianBill(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
-	logging.Debug("juxian request bill:%s,%s", req.RemoteAddr, req.URL.Path)
 	game_plat := game.GetGameNameByUrl(req.URL.Path) + "_" + game.GetPlatNameByUrl(req.URL.Path)
 	qid := req.FormValue("qid")
 	order_amount := req.FormValue("order_amount")
 	order_id := req.FormValue("order_id")
 	server_id := req.FormValue("server_id")
 	sign := req.FormValue("sign")
+	logging.Debug("juxian request bill:%s,%s,%s", qid, req.RemoteAddr, req.URL.Path)
 	hash := md5.New()
 	mystr := qid + order_amount + order_id + server_id + config.GetConfigStr(game_plat+"_key")
 	io.WriteString(hash, mystr)
@@ -138,11 +138,11 @@ func OnJuXianBill(w http.ResponseWriter, req *http.Request) {
 // juxian game auth
 func OnJuXianCheckName(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
-	logging.Debug("juxian request checkname:%s,%s", req.RemoteAddr, req.URL.Path)
 	game_plat := game.GetGameNameByUrl(req.URL.Path) + "_" + game.GetPlatNameByUrl(req.URL.Path)
 	qid := req.FormValue("qid")
 	server_id := req.FormValue("server_id")
 	sign := req.FormValue("sign")
+	logging.Debug("juxian request checkname:%s,%s,%s", qid, req.RemoteAddr, req.URL.Path)
 	hash := md5.New()
 	mystr := "qid=" + qid + "&server_id=" + server_id + config.GetConfigStr(game_plat+"_key")
 	io.WriteString(hash, mystr)
@@ -175,6 +175,11 @@ func OnJuXianCheckName(w http.ResponseWriter, req *http.Request) {
 		http.Redirect(w, req, config.GetConfigStr(game_plat+"_err"), 303)
 		return
 	}
+	zoneid, _ := strconv.Atoi(server_id)
+	gameid, _ := db.GetZonenameByZoneid(uint32(zoneid))
+	logging.Debug("request check ok:%s,%d,%d,%d", qid, myaccid, gameid, zoneid)
+	serverid, _ := strconv.Atoi(server_id)
+	server_id = strconv.Itoa((gameid << 16) + serverid)
 	names := db.GetAllZoneCharNameByAccid(server_id, myaccid)
 	if names == nil || len(names) == 0 {
 		logging.Debug("names err:%d", myaccid)
