@@ -56,7 +56,8 @@ func addMyAccount(channel, account, accountid string) (string, uint32, error) {
 		logging.Error("insert err:%s", err.Error())
 		return "", 0, err
 	}
-	return channel + ":" + account, uint32(res.InsertId()), nil
+	logging.Info("new account,%s,%u", channel+":"+account+":"+accountid, uint32(res.InsertId()))
+	return channel + ":" + account + ":" + accountid, uint32(res.InsertId()), nil
 }
 func InitDatabase(addr, name, password, dbname string) {
 	db = mysql.New("tcp", "", addr, name, password, dbname)

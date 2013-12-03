@@ -9,6 +9,7 @@ import (
 	//"math/rand"
 	"../../db"
 	Cmd "./common"
+	"fmt"
 	"html/template"
 	"net"
 	"net/http"
@@ -31,6 +32,7 @@ type BwGameTemplate struct {
 	Loginaddr  string
 	Loginport  string
 	Configpath string
+	Logintype  string
 }
 
 var (
@@ -106,13 +108,19 @@ func (self *GameLoginBw) Connect() *net.TCPConn {
 	return conn
 }
 
-func (self *GameLoginBw) Login(zoneid uint32, myaccount string, myaccid uint32, isAdult uint32, token string, w http.ResponseWriter, err_url string) error {
+func (self *GameLoginBw) Login(zoneid uint32, myaccount string, myaccid uint32, isAdult uint32, token string, w http.ResponseWriter, platname string, req *http.Request, err_url string) error {
 	game := 0
 	game, tmpl_data.Zonename = db.GetZonenameByZoneid(zoneid)
 	tmpl_data.Token = token
 	tmpl_data.Zoneid = strconv.Itoa(int(zoneid))
 	tmpl_data.Zonetype = "0"
 	tmpl_data.Nettype = "0"
+	starttype := req.FormValue("starttype")
+	if starttype != "" {
+		tmpl_data.Starttype = starttype
+	}
+	logintype := req.FormValue("logintype")
+	tmpl_data.Configpath = config.GetConfigStr("bw_configpath") + platname + ".xml"
 	cmd := Cmd.NewStWebLoginUserTokenWebGateUserCmd()
 	cmd.Zoneid = uint32((game << 16) + int(zoneid))
 	cmd.Accid = myaccid
@@ -127,6 +135,23 @@ func (self *GameLoginBw) Login(zoneid uint32, myaccount string, myaccid uint32, 
 	}
 	if self.task != nil {
 		self.task.SendCmd(cmd)
+	}
+	if logintype == "1" {
+		page := `<!DOCTYPE html>
+	<html>
+		<head>
+			<title></title>
+		</head>
+		<body>
+			<script type="text/javascript">
+				window.location.href = "%s";
+			</script>
+		</body>
+	</html>
+		`
+		url := fmt.Sprintf("/api/entergame?server=%d&servername=%s&token=%s", zoneid, tmpl_data.Zonename, token)
+		w.Write([]byte(fmt.Sprintf(page, url)))
+		return nil
 	}
 	tmpl_data.Loginurl = err_url
 	err := tmpl.Execute(w, tmpl_data)

@@ -76,7 +76,7 @@ func OnJuXianAuth(w http.ResponseWriter, req *http.Request) {
 	}
 	logging.Debug("request login ok:%s,%d", myaccount, myaccid)
 	adult, _ := strconv.Atoi(isAdult)
-	game.AddLoginToken(game.GetGameNameByUrl(req.URL.Path), server_id, myaccount, myaccid, uint32(adult), mysign, w, config.GetConfigStr(game_plat+"_err"))
+	game.AddLoginToken(game.GetGameNameByUrl(req.URL.Path), server_id, myaccount, myaccid, uint32(adult), mysign, w, game.GetPlatNameByUrl(req.URL.Path), req, config.GetConfigStr(game_plat+"_err"))
 	//para := fmt.Sprintf("?account=%s&accid=%d&server_id=%s", myaccount, myaccid, server_id)
 
 	//http.Redirect(w, req, config.GetConfigStr(game_plat+"_ok")+para, 303)

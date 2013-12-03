@@ -42,6 +42,7 @@ func main() {
 	if config.GetConfigStr("daemon") == "true" {
 		logging.DisableStdout()
 	}
+	logging.Info("server starting...")
 	mysqlurl := config.GetConfigStr("mysql")
 	if ok, err := regexp.MatchString("^mysql://.*:.*@.*/.*$", mysqlurl); ok == false || err != nil {
 		logging.Error("mysql config syntax err:%s", mysqlurl)
@@ -78,9 +79,11 @@ func main() {
 		logging.Debug("GetLocalIp Err:%s", err.Error())
 	}
 	fmt.Println(addrs[0].String(), addrs[0].Network(), strings.Split(addrs[0].String(), "/")[0])
-	err = http.ListenAndServe(strings.Split(addrs[0].String(), "/")[0]+":"+config.GetConfigStr("port"), nil)
+	//err = http.ListenAndServe(strings.Split(addrs[0].String(), "/")[0]+":"+config.GetConfigStr("port"), nil)
+	err = http.ListenAndServe(":"+config.GetConfigStr("port"), nil)
 	if err != nil {
 		fmt.Println(err)
 		logging.Debug("ListenAndServe:%s", err.Error())
 	}
+	logging.Info("server stop...")
 }

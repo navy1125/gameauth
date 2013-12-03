@@ -57,7 +57,7 @@ func On619GameAuth(w http.ResponseWriter, req *http.Request) {
 	gameid, _ := strconv.Atoi(game_id)
 	serverid, _ := strconv.Atoi(server_id)
 	server_id = strconv.Itoa((gameid << 16) + serverid)
-	game.AddLoginToken(game.GetGameNameByUrl(req.URL.Path), server_id, myaccount, myaccid, 1, mysign, w, config.GetConfigStr(game_plat+"_err"))
+	game.AddLoginToken(game.GetGameNameByUrl(req.URL.Path), server_id, myaccount, myaccid, 1, mysign, w, game.GetPlatNameByUrl(req.URL.Path), req, config.GetConfigStr(game_plat+"_err"))
 	//para := fmt.Sprintf("?account=%s&accid=%d&server_id=%s", myaccount, myaccid, server_id)
 	//http.Redirect(w, req, config.GetConfigStr(game_plat+"_ok")+para, 303)
 	//TODO redirect to gamepage
