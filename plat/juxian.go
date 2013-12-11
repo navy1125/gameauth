@@ -203,3 +203,48 @@ func OnJuXianCheckName(w http.ResponseWriter, req *http.Request) {
 	fmt.Println(string(b))
 	w.Write(b)
 }
+
+func OnJuUcjoyBill(w http.ResponseWriter, req *http.Request) {
+	defer req.Body.Close()
+	game_plat := game.GetGameNameByUrl(req.URL.Path) + "_" + game.GetPlatNameByUrl(req.URL.Path)
+	qid := req.FormValue("accountid")
+	gameid := req.FormValue("gameid")
+	server_id := req.FormValue("serverid")
+	orderid := req.FormValue("orderid")
+	order_amount := req.FormValue("point")
+	giftcoin := req.FormValue("giftcoin")
+	timestamp := req.FormValue("timestamp")
+	remark := req.FormValue("remark")
+	sign := req.FormValue("sign")
+	logging.Debug("ucjoy request bill:%s,%s,%s", qid, req.RemoteAddr, req.URL.Path)
+	hash := md5.New()
+	mystr := qid + gameid + server_id + orderid + order_amount + giftcoin + timestamp + remark + config.GetConfigStr(game_plat+"_key")
+	io.WriteString(hash, mystr)
+	mysign := fmt.Sprintf("%x", hash.Sum(nil))
+	if strings.ToLower(mysign) != strings.ToLower(sign) {
+		logging.Debug("md5 check err:%s,%s,%s", mystr, mysign, sign)
+		w.Write([]byte("0"))
+		return
+	}
+
+	myaccid, err := db.GetMyAccountByAccountId(game.GetPlatNameByUrl(req.URL.Path), qid)
+	if err != nil {
+		logging.Debug("bill account err:%s", qid)
+		w.Write([]byte("3"))
+		return
+	}
+	zoneid, _ := strconv.Atoi(server_id)
+	mygameid, _ := db.GetZonenameByZoneid(uint32(zoneid))
+	logging.Debug("request bill ok:%s,%d,%d,%d", qid, myaccid, mygameid, zoneid)
+	serverid, _ := strconv.Atoi(server_id)
+	server_id = strconv.Itoa((mygameid << 16) + serverid)
+	names := db.GetAllZoneCharNameByAccid(server_id, myaccid)
+	if names == nil || len(names) == 0 {
+		logging.Debug("bill checkname err:%d,%s", myaccid, qid)
+		w.Write([]byte("3"))
+		return
+	}
+	moneynum, _ := strconv.ParseFloat(order_amount, 32)
+	game.Billing(game.GetGameNameByUrl(req.URL.Path), server_id, myaccid, 0, uint32(moneynum*100))
+	w.Write([]byte("1"))
+}

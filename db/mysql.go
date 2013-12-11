@@ -56,7 +56,7 @@ func addMyAccount(channel, account, accountid string) (string, uint32, error) {
 		logging.Error("insert err:%s", err.Error())
 		return "", 0, err
 	}
-	logging.Info("new account,%s,%u", channel+":"+account+":"+accountid, uint32(res.InsertId()))
+	logging.Info("new account,%s,%d", channel+":"+account+":"+accountid, uint32(res.InsertId()))
 	return channel + ":" + account + ":" + accountid, uint32(res.InsertId()), nil
 }
 func InitDatabase(addr, name, password, dbname string) {
