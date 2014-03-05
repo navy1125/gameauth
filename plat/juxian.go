@@ -168,9 +168,9 @@ func OnJuXianCheckName(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	account := qid
+	//account := qid
 
-	_, myaccid, err := db.GetMyAccount(game.GetPlatNameByUrl(req.URL.Path), account, qid)
+	myaccid, err := db.GetMyAccountByAccountId(game.GetPlatNameByUrl(req.URL.Path), qid)
 	if err != nil {
 		http.Redirect(w, req, config.GetConfigStr(game_plat+"_err"), 303)
 		return
@@ -223,7 +223,7 @@ func OnJuUcjoyBill(w http.ResponseWriter, req *http.Request) {
 	mysign := fmt.Sprintf("%x", hash.Sum(nil))
 	if strings.ToLower(mysign) != strings.ToLower(sign) {
 		logging.Debug("md5 check err:%s,%s,%s", mystr, mysign, sign)
-		w.Write([]byte("0"))
+		w.Write([]byte("4"))
 		return
 	}
 
@@ -234,9 +234,39 @@ func OnJuUcjoyBill(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	zoneid, _ := strconv.Atoi(server_id)
+	if zoneid == 11211 {
+		zoneid = 11012
+	}
+	if zoneid == 11238 {
+		zoneid = 11013
+	}
+	if zoneid == 11351 {
+		zoneid = 11014
+	}
+	if zoneid == 11397 {
+		zoneid = 11015
+	}
+	if zoneid == 11396 {
+		zoneid = 11999
+	}
+	if zoneid == 11491 {
+		zoneid = 11016
+	}
+	if zoneid == 11551 {
+		zoneid = 11017
+	}
+	if zoneid == 11592 {
+		zoneid = 11018
+	}
+	if zoneid == 11651 {
+		zoneid = 11019
+	}
+	if zoneid == 11694 {
+		zoneid = 11998
+	}
 	mygameid, _ := db.GetZonenameByZoneid(uint32(zoneid))
 	logging.Debug("request bill ok:%s,%d,%d,%d", qid, myaccid, mygameid, zoneid)
-	serverid, _ := strconv.Atoi(server_id)
+	serverid := zoneid
 	server_id = strconv.Itoa((mygameid << 16) + serverid)
 	names := db.GetAllZoneCharNameByAccid(server_id, myaccid)
 	if names == nil || len(names) == 0 {
@@ -245,6 +275,6 @@ func OnJuUcjoyBill(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	moneynum, _ := strconv.ParseFloat(order_amount, 32)
-	game.Billing(game.GetGameNameByUrl(req.URL.Path), server_id, myaccid, 0, uint32(moneynum*100))
+	game.Billing(game.GetGameNameByUrl(req.URL.Path), server_id, myaccid, 0, uint32(moneynum))
 	w.Write([]byte("1"))
 }
