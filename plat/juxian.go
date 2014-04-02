@@ -264,6 +264,18 @@ func OnJuUcjoyBill(w http.ResponseWriter, req *http.Request) {
 	if zoneid == 11694 {
 		zoneid = 11998
 	}
+	if zoneid == 11771 {
+		zoneid = 11020
+	}
+	if zoneid == 11872 {
+		zoneid = 11021
+	}
+	if zoneid == 11912 {
+		zoneid = 11022
+	}
+	if zoneid == 11931 {
+		zoneid = 11023
+	}
 	mygameid, _ := db.GetZonenameByZoneid(uint32(zoneid))
 	logging.Debug("request bill ok:%s,%d,%d,%d", qid, myaccid, mygameid, zoneid)
 	serverid := zoneid

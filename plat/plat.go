@@ -60,6 +60,14 @@ func init() {
 	platMap["/zssj/myxiaoyao/bill"] = OnJuXianBill
 	platMap["/zssj/myxiaoyao/check"] = OnJuXianCheckName
 
+	platMap["/zssj/youxiwangguo/auth"] = OnJuXianAuth
+	platMap["/zssj/youxiwangguo/bill"] = OnJuXianBill
+	platMap["/zssj/youxiwangguo/check"] = OnJuXianCheckName
+
+	platMap["/zssj/717play/auth"] = OnJuXianAuth
+	platMap["/zssj/717play/bill"] = OnJuXianBill
+	platMap["/zssj/717play/check"] = OnJuXianCheckName
+
 	platMap["/zssj/kw/auth"] = OnKuaiWanAuth
 	platMap["/zssj/kw/bill"] = OnKuaiWanBill
 	platMap["/zssj/kw/check"] = OnKuaiWanCheckName
