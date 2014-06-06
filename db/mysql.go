@@ -1,7 +1,7 @@
 package db
 
 import (
-	"git.code4.in/logging"
+	"git.code4.in/mobilegameserver/logging"
 	"github.com/xuyu/iconv"
 	//"github.com/ziutek/mymysql/mysql"
 	mysql "github.com/ziutek/mymysql/autorc"

@@ -3,7 +3,7 @@ package plat
 import (
 	"../db"
 	"fmt"
-	"github.com/navy1125/config"
+	"git.code4.in/mobilegameserver/config"
 	"net/http"
 	"testing"
 )

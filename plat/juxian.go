@@ -6,8 +6,8 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
-	"git.code4.in/logging"
-	"github.com/navy1125/config"
+	"git.code4.in/mobilegameserver/config"
+	"git.code4.in/mobilegameserver/logging"
 	"github.com/xuyu/iconv"
 	"io"
 	"math"
@@ -275,6 +275,24 @@ func OnJuUcjoyBill(w http.ResponseWriter, req *http.Request) {
 	}
 	if zoneid == 11931 {
 		zoneid = 11023
+	}
+	if zoneid == 12011 {
+		zoneid = 11024
+	}
+	if zoneid == 12071 {
+		zoneid = 11099
+	}
+	if zoneid == 12091 {
+		zoneid = 11025
+	}
+	if zoneid == 12133 {
+		zoneid = 11026
+	}
+	if zoneid == 12211 {
+		zoneid = 11027
+	}
+	if zoneid == 12220 {
+		zoneid = 11098
 	}
 	mygameid, _ := db.GetZonenameByZoneid(uint32(zoneid))
 	logging.Debug("request bill ok:%s,%d,%d,%d", qid, myaccid, mygameid, zoneid)

@@ -1,8 +1,8 @@
 package bw
 
 import (
-	"git.code4.in/logging"
-	"github.com/navy1125/config"
+	"git.code4.in/mobilegameserver/logging"
+	"git.code4.in/mobilegameserver/config"
 	"github.com/navy1125/gotcp/bw/base"
 	//"github.com/navy1125/gotcp/bw/common"
 	"github.com/navy1125/gotcp/gotcp"

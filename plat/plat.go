@@ -1,7 +1,7 @@
 package plat
 
 import (
-	"github.com/navy1125/config"
+	"git.code4.in/mobilegameserver/config"
 	"net/http"
 )
 

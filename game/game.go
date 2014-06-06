@@ -2,7 +2,7 @@ package game
 
 import (
 	"./bw"
-	"git.code4.in/logging"
+	"git.code4.in/mobilegameserver/logging"
 	"net/http"
 	"regexp"
 	"strconv"
