@@ -234,6 +234,10 @@ func OnJuUcjoyBill(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	zoneid, _ := strconv.Atoi(server_id)
+	zid := config.GetConfigInt("zqb_zoneid_" + server_id)
+	if zid != 0 {
+		zoneid = zid
+	}
 	if zoneid == 11211 {
 		zoneid = 11012
 	}

@@ -13,5 +13,6 @@
 		<key>key.xml</key>
 		<port>8000</port>
 		<loginServerList>loginServerList.xml</loginServerList>
+		<zqb_zoneid_10000>10000</zqb_zoneid_10000>
 	</AuthServer>
 </Zebra>
