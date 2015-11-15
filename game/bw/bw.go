@@ -3,9 +3,7 @@ package bw
 import (
 	"git.code4.in/mobilegameserver/config"
 	"git.code4.in/mobilegameserver/logging"
-	"github.com/navy1125/gotcp/bw/base"
-	//"github.com/navy1125/gotcp/bw/common"
-	"github.com/navy1125/gotcp/gotcp"
+	"git.code4.in/mobilegameserver/unibase/bwtask"
 	//"math/rand"
 	"fmt"
 	"github.com/navy1125/gameauth/db"
@@ -41,7 +39,7 @@ var (
 )
 
 type GameLoginBw struct {
-	task *gotcp.Task
+	task *bwtask.BwTask
 }
 
 func NewGameLoginBw() *GameLoginBw {
@@ -73,11 +71,7 @@ func (self *GameLoginBw) Init(name string) bool {
 				conn = self.Connect()
 			}
 			if conn != nil {
-				self.task = gotcp.NewTask(conn, "BW")
-				self.task.SetHandleReadFun(base.HandleReadFunBw)
-				self.task.SetHandleWriteFun(base.HandleWriteFunBw)
-				self.task.SetHandleParseFun(base.HandleParseBw)
-				self.task.SetHandleHeartBteaFun(base.HandleHeartBeatRequestBw, time.Second*10)
+				self.task = bwtask.NewBwTask(conn, "LBW")
 				self.task.SetHandleMessage(&handleMessageMap)
 				cmd := Cmd.NewStRequestLoginLoginCmd()
 				self.task.SendCmd(cmd)
@@ -164,7 +158,7 @@ func (self *GameLoginBw) Login(zoneid uint32, myaccount string, myaccid uint32, 
 }
 
 type GameBillingBw struct {
-	task *gotcp.Task
+	task *bwtask.BwTask
 }
 
 func NewGameBillingBw() *GameBillingBw {
@@ -181,11 +175,7 @@ func (self *GameBillingBw) Init(name string) bool {
 				conn = self.Connect()
 			}
 			if conn != nil {
-				self.task = gotcp.NewTask(conn, "BW")
-				self.task.SetHandleReadFun(base.HandleReadFunBw)
-				self.task.SetHandleWriteFun(base.HandleWriteFunBw)
-				self.task.SetHandleParseFun(base.HandleParseBw)
-				self.task.SetHandleHeartBteaFun(base.HandleHeartBeatRequestBw, time.Second*10)
+				self.task = bwtask.NewBwTask(conn, "BBW")
 				self.task.SetHandleMessage(&handleMessageMap)
 				cmd := Cmd.NewStRequestLoginBillUserCmd()
 				cmd.Version = 20211111

@@ -22,6 +22,7 @@ func main() {
 	config.SetConfig("port", *flag.String("port", "8000", "http port "))
 	config.SetConfig("log", *flag.String("log", "debug", "logger level "))
 	config.SetConfig("loginServerList", *flag.String("loginServerList", "loginServerList.xml", "server list config"))
+	config.SetConfig("bw_plugin", *flag.String("bw_plugin", "game/bw/", "bw_plugin dir"))
 	config.LoadFromFile(config.GetConfigStr("config"), "global")
 	if err := config.LoadFromFile(config.GetConfigStr("config"), "AuthServer"); err != nil {
 		fmt.Println(err)
@@ -77,8 +78,9 @@ func main() {
 	if err != nil {
 		fmt.Println("GetLocalIp Err:", err)
 		logging.Debug("GetLocalIp Err:%s", err.Error())
+	} else {
+		fmt.Println(addrs[0].String(), addrs[0].Network(), strings.Split(addrs[0].String(), "/")[0])
 	}
-	fmt.Println(addrs[0].String(), addrs[0].Network(), strings.Split(addrs[0].String(), "/")[0])
 	//err = http.ListenAndServe(strings.Split(addrs[0].String(), "/")[0]+":"+config.GetConfigStr("port"), nil)
 	err = http.ListenAndServe(":"+config.GetConfigStr("port"), nil)
 	if err != nil {

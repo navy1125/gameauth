@@ -1,12 +1,12 @@
 package bw
 
 import (
-	"github.com/navy1125/gotcp/bw/common"
-	"github.com/navy1125/gotcp/gotcp"
+	"git.code4.in/mobilegameserver/unibase/bwtask"
+	"git.code4.in/mobilegameserver/unibase/bwtask/common"
 )
 
 var (
-	handleMessageMap gotcp.HanldeMessageMap
+	handleMessageMap bwtask.HanldeMessageMap
 )
 
 func init() {
@@ -16,17 +16,17 @@ func init() {
 
 }
 
-func RegisterMessage(byCmd, byParam byte, fun gotcp.HandleMessageFunc) {
+func RegisterMessage(byCmd, byParam byte, fun bwtask.HandleMessageFunc) {
 	handleMessageMap[byCmd][byParam] = fun
 }
 
-func parseStGameTimeTimerUserCmd(task *gotcp.Task, data []byte) {
+func parseStGameTimeTimerUserCmd(task *bwtask.BwTask, data []byte) {
 	task.Debug("heartBeat")
 	cmd := Cmd.NewStGameTimeTimerUserCmd()
 	task.SendCmd(cmd)
 }
 
-func parseStRequestUserGameTimeTimerUserCmd(task *gotcp.Task, data []byte) {
+func parseStRequestUserGameTimeTimerUserCmd(task *bwtask.BwTask, data []byte) {
 	cmd := Cmd.NewStRequestUserGameTimeTimerUserCmd()
 	err := task.GetCmd(data, cmd)
 	if err != nil {
@@ -37,7 +37,7 @@ func parseStRequestUserGameTimeTimerUserCmd(task *gotcp.Task, data []byte) {
 	task.SendCmd(cmd)
 }
 
-func parseStUserGameTimeTimerUserCmd(task *gotcp.Task, data []byte) {
+func parseStUserGameTimeTimerUserCmd(task *bwtask.BwTask, data []byte) {
 	cmd := Cmd.NewStUserGameTimeTimerUserCmd()
 	err := task.GetCmd(data, cmd)
 	if err != nil {
