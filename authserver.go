@@ -1,13 +1,13 @@
 package main
 
 import (
-	"./db"
-	"./game"
-	"./plat"
 	"flag"
 	"fmt"
-	"git.code4.in/mobilegameserver/logging"
 	"git.code4.in/mobilegameserver/config"
+	"git.code4.in/mobilegameserver/logging"
+	"github.com/navy1125/gameauth/db"
+	"github.com/navy1125/gameauth/game"
+	"github.com/navy1125/gameauth/plat"
 	"net"
 	"net/http"
 	"regexp"

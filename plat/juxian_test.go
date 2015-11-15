@@ -1,7 +1,7 @@
 package plat
 
 import (
-	"../db"
+	"github.com/navy1125/gameauth/db"
 	"fmt"
 	"git.code4.in/mobilegameserver/config"
 	"net/http"

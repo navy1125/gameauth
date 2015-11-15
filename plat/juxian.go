@@ -1,13 +1,13 @@
 package plat
 
 import (
-	"../db"
-	"../game"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"git.code4.in/mobilegameserver/config"
 	"git.code4.in/mobilegameserver/logging"
+	"github.com/navy1125/gameauth/db"
+	"github.com/navy1125/gameauth/game"
 	"github.com/xuyu/iconv"
 	"io"
 	"math"

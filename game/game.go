@@ -1,8 +1,8 @@
 package game
 
 import (
-	"./bw"
 	"git.code4.in/mobilegameserver/logging"
+	"github.com/navy1125/gameauth/game/bw"
 	"net/http"
 	"regexp"
 	"strconv"

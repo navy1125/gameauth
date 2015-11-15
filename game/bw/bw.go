@@ -1,15 +1,15 @@
 package bw
 
 import (
-	"git.code4.in/mobilegameserver/logging"
 	"git.code4.in/mobilegameserver/config"
+	"git.code4.in/mobilegameserver/logging"
 	"github.com/navy1125/gotcp/bw/base"
 	//"github.com/navy1125/gotcp/bw/common"
 	"github.com/navy1125/gotcp/gotcp"
 	//"math/rand"
-	"../../db"
-	Cmd "./common"
 	"fmt"
+	"github.com/navy1125/gameauth/db"
+	Cmd "github.com/navy1125/gameauth/game/bw/common"
 	"html/template"
 	"net"
 	"net/http"
